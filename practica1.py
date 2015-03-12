@@ -19,31 +19,40 @@ class servidor(webapp.webApp):
 
     def process(self, parsedRequest):
 
-        imagenFondo = "http://lorenabarba.com/wp-content/uploads/2014/05/keep-calm-and-code-python_BW.png"
+        #imagenFondo = "http://lorenabarba.com/wp-content/uploads/2014/05/keep-calm-and-code-python_BW.png"
         (verb, resource, body) = parsedRequest
+        
+        #Creo dos strings donde almaceno las paginas reales y acortadas
+        paginaAcortada = "http://localhost:1234/"
+        keys = ""
+        values = ""
+        if len(self.urlsStored) != 0:
+                for index in range(0,len(self.urlsStored)):
+                        keys += "<p>("+ str(index+1) + ")" + paginaAcortada + str(index) + "</p>"
+                        values += "<p>("+ str(index+1) + ")" + self.urlsStored[str(index)] + "</p>"
 
         if resource == '/':
             if verb == "GET":
 
                 httpCode = "200 OK"
-                htmlCode = ("<html><body>"+
-                            "<style type= text/css>"
-                            "body {"
-                            "background-image: url("+imagenFondo+");"
-                            "background-repeat: no-repeat;"
-                            "background-position: 50% 5%;"
-                            "}"
-                            "</style>"+
-                            "<h1>ACORTADOR DE URL'S</h1>" +
-                            "<form name= search  action= /  method= POST >" +
-                            "Insertar URL: <input type= text  name= url >" +
-                            "<input type= submit value= Buscar >" +
-                            "</form>"+
-                            "<hr>"+
-                            "<h2>Url's reales</h2>"+
-                            "<h2>Url's acortadas</h2>"+
-                            "</body>"
-                            "</html>")
+                htmlCode = ("<html>"
+                           "<body bgcolor= #8181F7>"
+                           "<h1>CORTADOR DE URL'S</h1>" +
+                           "<form name= search  action= /  method= POST >" +
+                           "Insertar URL: <input type= text  name= url >" +
+                           "<input type= submit value= Buscar >" +
+                           "<hr>"+
+                           "<table align = center border=1>"+
+                           "<td bgcolor = #BDBDBD>" +"URL'S REALES"+"</td>"+
+                           "<td bgcolor = #BDBDBD>" +"URL'S ACORTADAS"+"</td>"+
+                           "<tr><td bgcolor= #FBFBEF>"+
+                           values +
+                           "<td bgcolor= #FBFBEF>"+ 
+                           keys +
+                           "</td></table>"+
+                           
+                           "</body>"
+                           "</html>")
 
             elif verb == "POST":
 
@@ -68,43 +77,27 @@ class servidor(webapp.webApp):
 
                     self.urlsStored[str(numUrls)] = url
                     self.checkUrls[url] = str(numUrls)
-                #Creo dos strings donde almaceno las paginas reales y acortadas
-                paginaAcortada = "http://localhost:1234/"
-                keys = ""
-                values = ""
-                for index in range(0,len(self.urlsStored)):
-                    keys += "<p>("+ str(index+1) + ")" + paginaAcortada + str(index) + "</p>"
-                    values += "<p>("+ str(index+1) + ")" + self.urlsStored[str(index)] + "</p>"
-        
+                
                 #Genero los Strings de la pagina real y acortada para imprimir
                 index = self.checkUrls[url]
-                paginaFinal = paginaAcortada + index
-
+                paginaFinal = paginaAcortada + index        
+                
                 httpCode = "200 OK"
                 htmlCode = ("<html>"
                            "<body bgcolor= #8181F7>"
                            "<h1>CORTADOR DE URL'S</h1>" +
-                           "<form name= search  action= /  method= POST >" +
-                           "Insertar URL: <input type= text  name= url >" +
-                           "<input type= submit value= Buscar >" +
-                           "</form>"+
                            "<table border=1>"+
                            "<td bgcolor = #BDBDBD>" +"Real"+"</td>"+
                            "<td bgcolor = #BDBDBD>" +"Acortada"+"</td>"+
                            "<tr><td bgcolor= #FBFBEF>"+
-                           "<a href="+url+">"+url[7:]+"</a></p>"+
+                           "<a href="+url+">"+url.split("//",1)[1]+"</a></p>"+
                            "<td bgcolor= #FBFBEF>"
-                           "<a href="+paginaFinal+">"+paginaFinal[7:]+"</a></p>"
+                           "<a href="+paginaFinal+">"+paginaFinal.split("//",1)[1]+"</a></p>"
                            "</td></table>"+
                            "<hr>"+
-                           "<table align = center border=1>"+
-                           "<td bgcolor = #BDBDBD>" +"URL'S REALES"+"</td>"+
-                           "<td bgcolor = #BDBDBD>" +"URL'S ACORTADAS"+"</td>"+
-                           "<tr><td bgcolor= #FBFBEF>"+
-                           values +
-                           "<td bgcolor= #FBFBEF>"+ 
-                           keys +
-                           "</td></table>"+
+                           "<form method= get action= http://localhost:1234>"
+                           "<input type= submit  value= Volver a página inicial/>"+
+                           "</form>"
                            "</body>"
                            "</html>")
 
