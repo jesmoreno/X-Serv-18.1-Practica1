@@ -102,7 +102,7 @@ class servidor(webapp.webApp):
                            "</html>")
 
         elif verb == "GET" and resource[0] == '/' and len(resource) > 1:
-            key = resource[1]
+            key = resource[1:len(resource)]
 
             if (self.urlsStored.has_key(key)):
                 url = self.urlsStored[key]
